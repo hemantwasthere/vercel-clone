@@ -7,10 +7,10 @@ const { Kafka } = require("kafkajs");
 
 // Initialize the S3 client
 const s3Client = new S3Client({
-  region: "",
+  region: "ap-south-1",
   credentials: {
-    accessKeyId: "",
-    secretAccessKey: "",
+    accessKeyId: process.env.ACCESS_KEY_ID,
+    secretAccessKey: process.env.SECRET_ACCESS_KEY,
   },
 });
 
@@ -19,14 +19,14 @@ const DEPLOYMENT_ID = process.env.DEPLOYMENT_ID;
 
 const kafka = new Kafka({
   clientId: `docker-build-server-${DEPLOYMENT_ID}`,
-  brokers: [""],
+  brokers: [process.env.KAFKA_BROKER],
   ssl: {
-    ca: [fs.readFileSync(path.join(__dirname, "kafka.cer"), "utf-8")],
+    ca: [fs.readFileSync(path.join(__dirname, "kafka.pem"), "utf-8")],
   },
   sasl: {
-    username: "",
-    password: "",
-    mechanism: "plain",
+    username: process.env.KAFKA_USERNAME,
+    password: process.env.KAFKA_PASSWORD,
+    mechanism: process.env.KAFKA_MECHANISM,
   },
 });
 
@@ -78,7 +78,7 @@ async function init() {
       await publishLog(`uploading ${file}...`);
 
       const command = new PutObjectCommand({
-        Bucket: "dreaded-vercel",
+        Bucket: "adhd-vercel",
         Key: `__outputs/${PROJECT_ID}/${file}`,
         Body: fs.createReadStream(filePath),
         ContentType: mime.lookup(filePath),
