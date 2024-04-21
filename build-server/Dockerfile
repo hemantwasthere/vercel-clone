@@ -14,7 +14,7 @@ WORKDIR /home/app
 COPY main.sh main.sh
 COPY script.js script.js
 COPY package*.json .
-COPY kafka.cer kafka.cer
+COPY kafka.pem kafka.pem
 
 RUN npm install
 

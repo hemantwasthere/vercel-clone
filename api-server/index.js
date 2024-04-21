@@ -58,7 +58,7 @@ const ecsClient = new ECSClient({
 });
 
 const config = {
-  CLUSTER: "",
+  CLUSTER: process.env.CLUSTER_ARN,
   TASK: "",
 };
 
