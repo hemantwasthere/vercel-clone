@@ -15,23 +15,23 @@ const app = express();
 const PORT = 9000;
 
 const kafka = new Kafka({
-  clientId: `api-server`,
-  brokers: [""],
+  clientId: `docker-build-server-${DEPLOYMENT_ID}`,
+  brokers: [process.env.KAFKA_BROKER],
   ssl: {
-    ca: [fs.readFileSync(path.join(__dirname, "kafka.cer"), "utf-8")],
+    ca: [fs.readFileSync(path.join(__dirname, "kafka.pem"), "utf-8")],
   },
   sasl: {
-    username: "",
-    password: "",
-    mechanism: "plain",
+    username: process.env.KAFKA_USERNAME,
+    password: process.env.KAFKA_PASSWORD,
+    mechanism: process.env.KAFKA_MECHANISM,
   },
 });
 
-const client = new createClient({
-  host: "",
-  username: "",
-  password: "",
+const client = createClient({
+  host: process.env.CLICKHOUSE_HOST,
+  username: process.env.CLICKHOUSE_USERNAME,
   database: "default",
+  password: process.env.CLICKHOUSE_PASSWORD,
 });
 
 const consumer = kafka.consumer({ groupId: "api-server-logs-consumer" });
@@ -52,8 +52,8 @@ io.listen(9002, () => console.log("Socket server is running on port 9002"));
 const ecsClient = new ECSClient({
   region: "ap-south-1",
   credentials: {
-    accessKeyId: "",
-    secretAccessKey: "",
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   },
 });
 
